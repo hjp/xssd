@@ -1,0 +1,52 @@
+.\" $Id: xssd.1,v 1.1 2001-11-12 10:24:55 hjp Exp $
+.TH xssd 1
+.SH NAME
+xssd - extremely simple sudo
+.SH SYNOPSIS
+.B xssd
+.I user
+.I command
+[
+.I args ...
+]
+.SH DESCRIPTION
+.B xssd
+allows execution of commands as another user similar to sudo or setuid bits. 
+Unlike sudo, however, it is intended to be extremely simple and
+therefore easy to verify for correctness. Unlike setuid bits, it logs
+each invocation to syslog, filters environment variables and is more
+flexible in granting access to different users.
+.PP
+On startup, 
+.B xssd
+reads the file \fB/etc/xssd/\fIuser\fB/\fIcommand\fR, which contains
+lines in the format Keyword: Value. The Keywords are case sensitive,
+whitespace around the value is ignored. Lines which don't match this
+pattern and unrecognized keywords are ignored. The following keywords are
+recognized:
+.TP Command
+The full path of the command to be executed. argv[0] will still be taken
+from the command line.
+.TP User
+The user name of a user allowed to execute this command
+.TP Group
+The group name of a group allowed to execute this command
+.TP Env
+The name of an environment variable which is passed through to the
+command unchanged. All environment variables not mentioned in the
+configuration file are discarded.
+.PP
+Then xssd sets the gid, auxiliary groups and uid to that of the target 
+.I user
+and executes the command.
+.SH DIAGNOSTICS
+Intended to be self-explanatory. All diagnostics are printed to stderr
+and sent to syslog.
+.SH AUTHOR
+Peter J. Holzer (hjp@hjp.at)
+.\" $Log: xssd.1,v $
+.\" Revision 1.1  2001-11-12 10:24:55  hjp
+.\" Pre-Release
+.\"
+.\"
+.\" vim:tw=72
