@@ -1,0 +1,5 @@
+$(BUILD_ROOT)/$(BINDIR)/ $(BUILD_ROOT)/$(MAN1DIR)/:
+	$(INSTALL) -d $@
+
+$(BUILD_ROOT)/$(BINDIR)/% $(BUILD_ROOT)/$(MAN1DIR)/%: %
+	$(INSTALL) $< $@

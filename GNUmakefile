@@ -1,20 +1,51 @@
-include GNUmakevars
+-include GNUmakevars
+
+config: GNUmakevars GNUmakerules
+
+# Targets
 
 all: xssd
 
+rpm: xssd.rpm
+
 xssd: xssd.o
 
-install: $(BINDIR)/xssd $(MAN1DIR)/xssd.1
+install: \
+    $(BUILD_ROOT)/$(BINDIR) \
+    $(BUILD_ROOT)/$(BINDIR)/xssd \
+    $(BUILD_ROOT)/$(MAN1DIR) \
+    $(BUILD_ROOT)/$(MAN1DIR)/xssd.1 \
+    $(BUILD_ROOT)/etc/xssd
+
 
 clean:
 	rm -f xssd.o xssd
 
 distclean: clean
-	rm -f xssd.d
+	rm -f xssd.d GNUmakevars
 
-$(BINDIR)/xssd: xssd
+
+$(BUILD_ROOT)/$(BINDIR)/xssd: xssd
 	$(INSTALL) -o root -m 4711 $^ $@
 
+$(BUILD_ROOT)/etc/xssd:
+	$(INSTALL) -d $(BUILD_ROOT)/etc/xssd
 
-include GNUmakerules
+%.tar.gz: % %.spec
+	tar zcf $@ $^
+
+%: %.sh
+	sh $^
+
+xssd.tar.gz: \
+    GNUmakefile  \
+    GNUmakerules \
+    GNUmakevars.sh \
+    xssd.1 \
+    xssd.c
+
+%.rpm: %.tar.gz
+	rpm -ta --clean --sign --rmsource $^ 
+
+-include GNUmakerules
 -include *.d
