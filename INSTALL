@@ -10,8 +10,17 @@
     system. You can also move them to a central place where gnu make can
     find them (like /usr/local/include). 
 
-3) run "make all"
+    GNUmakevars is automatically generated from a shell script if it
+    isn't found. If this happens, a warning about target "/" being
+    multiply defined in GNUmakerules is printed, which can be ignored.
+
+3) run "make"
 
 4) run "make install" as root
 
     xssd needs to be installed setuid root.
+
+5) If you want to build an RPM, run "make rpm" instead of steps 3 and 4.
+    For a Redhat default setup, you need to root to do that and the
+    source and binary RPMs will be put below /usr/src/redhat. You also
+    need to have configured RPM for signing packages.
