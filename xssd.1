@@ -1,9 +1,12 @@
-.\" $Id: xssd.1,v 1.3 2002-01-23 00:35:31 hjp Exp $
+.\" $Id: xssd.1,v 1.4 2002-11-29 11:59:57 hjp Exp $
 .TH xssd 1
 .SH NAME
 xssd - extremely simple sudo
 .SH SYNOPSIS
 .B xssd
+[
+.B \-q
+]
 .I user
 .I command
 [
@@ -42,13 +45,20 @@ configuration file are discarded.
 Then xssd sets the gid, auxiliary groups and uid to that of the target 
 .I user
 and executes the command.
+.SH OPTIONS
+.TP
+\-q
+Do not write any messages to stderr, only to syslog.
 .SH DIAGNOSTICS
 Intended to be self-explanatory. All diagnostics are printed to stderr
 and sent to syslog.
 .SH AUTHOR
 Peter J. Holzer (hjp@hjp.at)
 .\" $Log: xssd.1,v $
-.\" Revision 1.3  2002-01-23 00:35:31  hjp
+.\" Revision 1.4  2002-11-29 11:59:57  hjp
+.\" Added -q option
+.\"
+.\" Revision 1.3  2002/01/23 00:35:31  hjp
 .\" fixed syntax error .TP commands
 .\"
 .\" Revision 1.2  2001/11/19 08:23:03  hjp

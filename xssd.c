@@ -25,6 +25,7 @@
 
 */
 
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
@@ -41,14 +42,14 @@
 
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.6 2002-04-26 15:17:26 hjp Exp $";
+    "$Id: xssd.c,v 1.7 2002-11-29 11:59:57 hjp Exp $";
 
 
 char *cmnd;
 
 
 static void usage(void) {
-    fprintf(stderr, "Usage: %s user command arguments\n", cmnd);
+    fprintf(stderr, "Usage: %s [-q] user command arguments\n", cmnd);
     exit(1);
 }
 
@@ -100,16 +101,30 @@ int main(int argc, char **argv) {
     char *command = NULL;
     char *user;
     struct passwd *pw;
+    int log_opts = LOG_PID | LOG_PERROR;
+    int c;
     
     clean_fds();
 
     cmnd = argv[0];
 
-    if (argc < 3) usage();
+    while ((c = getopt(argc, argv, "q")) != EOF) {
+	switch(c) {
+	    case 'q':
+		log_opts &= !LOG_PERROR;
+		break;
+	    case '?':
+		usage();
+	    default:
+		assert(0);
+	}
+    }
 
-    user = argv[1];
+    if (argc - optind < 2) usage();
 
-    openlog("xssd", LOG_PID | LOG_PERROR, LOG_AUTH);
+    user = argv[optind++];
+
+    openlog("xssd", log_opts, LOG_AUTH);
 
     /* a / in either the username or the command name could be used to 
      * break out of /etc/xssd. Of course the user would actually have to 
@@ -120,14 +135,14 @@ int main(int argc, char **argv) {
 	       user, getuid());
 	exit(1);
     }
-    if (strchr(argv[2], '/')) {
+    if (strchr(argv[optind], '/')) {
 	syslog(LOG_ERR, "invalid command name %s. [Ruid: %d]",
-	       argv[2], getuid());
+	       argv[optind], getuid());
 	exit(1);
     }
 
     snprintf(cfgfile, sizeof(cfgfile), "/etc/xssd/%s/%s",
-	     user, argv[2]);					/* check for return value unnecessary, because
+	     user, argv[optind]);				/* check for return value unnecessary, because
 	     							   fopen below will fail if no config file 
 								   exists
 								 */
@@ -269,7 +284,7 @@ int main(int argc, char **argv) {
     }
     syslog(LOG_INFO, "%s: execing %s. [Ruid: %d]",
 	   cfgfile, command, getuid());
-    execve(command, argv + 2, env);
+    execve(command, argv + optind, env);
     syslog(LOG_ERR, "%s: execve(%s) failed: %s. [Ruid: %d]",
 	   cfgfile, command, strerror(errno), getuid());
 
@@ -278,7 +293,10 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.6  2002-04-26 15:17:26  hjp
+    Revision 1.7  2002-11-29 11:59:57  hjp
+    Added -q option
+
+    Revision 1.6  2002/04/26 15:17:26  hjp
     Close config file after use.
     Make sure stdin/out/err are open.
 
