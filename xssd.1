@@ -1,4 +1,4 @@
-.\" $Id: xssd.1,v 1.1 2001-11-12 10:24:55 hjp Exp $
+.\" $Id: xssd.1,v 1.2 2001-11-19 08:23:03 hjp Exp $
 .TH xssd 1
 .SH NAME
 xssd - extremely simple sudo
@@ -20,10 +20,9 @@ flexible in granting access to different users.
 On startup, 
 .B xssd
 reads the file \fB/etc/xssd/\fIuser\fB/\fIcommand\fR, which contains
-lines in the format Keyword: Value. The Keywords are case sensitive,
-whitespace around the value is ignored. Lines which don't match this
-pattern and unrecognized keywords are ignored. The following keywords are
-recognized:
+lines in the format Keyword: Value, or comments starting with "#".
+The Keywords are case sensitive, whitespace around the value is ignored.
+The following keywords are recognized:
 .TP Command
 The full path of the command to be executed. argv[0] will still be taken
 from the command line.
@@ -45,7 +44,11 @@ and sent to syslog.
 .SH AUTHOR
 Peter J. Holzer (hjp@hjp.at)
 .\" $Log: xssd.1,v $
-.\" Revision 1.1  2001-11-12 10:24:55  hjp
+.\" Revision 1.2  2001-11-19 08:23:03  hjp
+.\" Croak on unknown keywords. Made Comments explicit.
+.\" Thanks to Bernd Petrovitsch for the patch.
+.\"
+.\" Revision 1.1  2001/11/12 10:24:55  hjp
 .\" Pre-Release
 .\"
 .\"

@@ -9,7 +9,9 @@
 
     xssd then looks up the configuration file 
     /etc/xssd/<user>/<command>, which contains lines in 
-    Keyword: Value format. Currently defined keywords are:
+    Keyword: Value format, or comments starting with "#".
+    
+    Currently defined keywords are:
 
     Command: The command which is really executed. Must be 
     	absolute path.
@@ -38,7 +40,7 @@
 
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.3 2001-11-12 20:39:58 hjp Exp $";
+    "$Id: xssd.c,v 1.4 2001-11-19 08:23:06 hjp Exp $";
 
 
 char *cmnd;
@@ -109,15 +111,17 @@ int main(int argc, char **argv) {
 	}
 	 
 
-	/* Check for keywords. If none are found, ignore the line 
-	   (Automatic comments :-)
+	/* Check for keywords. 
 	 */
-	 
+	if (*line == '#') {
+	    continue;
+	}
 	if (strncmp(line, "Command:", strlen("Command:") ) == 0) {
 	    int lp;
 
 	    skip_ws(line, lp, strlen("Command:"));
 	    command = strdup(line + lp);
+	    continue;
 	}
 	if (strncmp(line, "User:", strlen("User:") ) == 0) {
 	    int lp;
@@ -128,6 +132,7 @@ int main(int argc, char **argv) {
 	    if (pw && pw->pw_uid == getuid()) {
 		grant = 1;
 	    }
+	    continue;
 	}
 	if (strncmp(line, "Group:", strlen("Group:") ) == 0) {
 	    int lp;
@@ -149,6 +154,7 @@ int main(int argc, char **argv) {
 		    }
 		}
 	    }
+	    continue;
 	}
 	if (strncmp(line, "Env:", strlen("Env:") ) == 0) {
 	    char *s;
@@ -173,7 +179,12 @@ int main(int argc, char **argv) {
 		sprintf(env[env_i], "%s=%s", line + lp, s);
 		env_i++;
 	    }
+	    continue;
 	}
+	/* if we get here, we have an unknown keyword or mistyped or ...
+	 */
+	fprintf(stderr, "Do not know what to do with \"%s\"\n", line);
+	exit(1);
     }
     if (env_i >= env_a) {
 	env_a = env_a * 3 / 2 + 10;
@@ -221,7 +232,11 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.3  2001-11-12 20:39:58  hjp
+    Revision 1.4  2001-11-19 08:23:06  hjp
+    Croak on unknown keywords. Made Comments explicit.
+    Thanks to Bernd Petrovitsch for the patch.
+
+    Revision 1.3  2001/11/12 20:39:58  hjp
     Outch. We should really deny access not only say that we do.
 
     Revision 1.2  2001/11/12 20:22:55  hjp
