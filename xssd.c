@@ -38,7 +38,7 @@
 
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.2 2001-11-12 20:22:55 hjp Exp $";
+    "$Id: xssd.c,v 1.3 2001-11-12 20:39:58 hjp Exp $";
 
 
 char *cmnd;
@@ -185,8 +185,11 @@ int main(int argc, char **argv) {
     }
     env[env_i] = NULL;
 
-    if (!grant) {
+    if (grant) {
+	syslog(LOG_INFO, "%s: access granted. [Ruid: %d]", cfgfile, getuid());
+    } else {
 	syslog(LOG_NOTICE, "%s: access denied. [Ruid: %d]", cfgfile, getuid());
+	exit(1);
     }
 
     pw = getpwnam (user); 
@@ -218,7 +221,10 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.2  2001-11-12 20:22:55  hjp
+    Revision 1.3  2001-11-12 20:39:58  hjp
+    Outch. We should really deny access not only say that we do.
+
+    Revision 1.2  2001/11/12 20:22:55  hjp
     Removed wrong argument from syslog (Shouldn't gcc know that syslog
     uses a printf-like format string?)
 
