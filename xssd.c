@@ -40,9 +40,12 @@
 #include <grp.h>
 #include <sys/types.h>
 
+#ifndef LOG_PERROR
+    #define LOG_PERROR 0
+#endif
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.7 2002-11-29 11:59:57 hjp Exp $";
+    "$Id: xssd.c,v 1.8 2003-11-06 18:19:14 hjp Exp $";
 
 
 char *cmnd;
@@ -293,7 +296,10 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.7  2002-11-29 11:59:57  hjp
+    Revision 1.8  2003-11-06 18:19:14  hjp
+    HP-UX: fixed check for gcc, Use LOG_PERROR only if defined.
+
+    Revision 1.7  2002/11/29 11:59:57  hjp
     Added -q option
 
     Revision 1.6  2002/04/26 15:17:26  hjp

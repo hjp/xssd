@@ -19,16 +19,17 @@ fi
 echo INSTALL=$install						>> GNUmakevars.$$
 
 gcc=`which gcc`
-if [ -n "$gcc" ]
-then
+case "$gcc" in
+/*/gcc)
     echo "CC=gcc -MD -Wall -Wpointer-arith \\"			>> GNUmakevars.$$
     echo "    -Wstrict-prototypes -Wmissing-prototypes \\"	>> GNUmakevars.$$
     echo "    -Wnested-externs"					>> GNUmakevars.$$
     echo "CFLAGS=-O3"						>> GNUmakevars.$$
-else 
+    ;;
+*)
     echo "CC=cc"						>> GNUmakevars.$$
     echo "CFLAGS=-O"						>> GNUmakevars.$$
-fi
+esac
 
 echo "all:"							>> GNUmakevars.$$
 mv GNUmakevars.$$ GNUmakevars
