@@ -1,6 +1,6 @@
 Summary: xssd - extremely simple sudo
 Name: xssd
-Version: 0.6
+Version: 0.7
 Release: 1
 Copyright: GPL
 Source: %{name}.tar.gz
@@ -22,18 +22,21 @@ more flexible in granting access to different users.
 
 %install
 make PREFIX=%{_prefix}
-make PREFIX=%{_prefix} BUILD_ROOT=${RPM_BUILD_ROOT} install
+make PREFIX=%{_prefix} BUILD_ROOT=${RPM_BUILD_ROOT} SUIDPERM="" install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0644,root,root,0755)
-%attr(4755,root,root) /usr/bin/xssd
+%attr(4711,root,root) /usr/bin/xssd
 %dir /etc/xssd
 %{_mandir}/man1/xssd.1.gz
 
 %changelog
+* Mon Nov 25 2002 Peter J. Holzer <hjp@hjp.at
+- allow building RPM as non-root				0.7-1
+
 * Fri Apr 26 2002 Peter J. Holzer <hjp@hjp.at
 - Close config file after use.
 - Make sure stdin/out/err are open.

@@ -1,5 +1,10 @@
 -include GNUmakevars
 
+# options for install to install a suid binary. 
+# This can be overridden on the command line to allow building
+# RPMs as unprivileged user.
+SUIDPERM = -o root -m 4711 
+
 config: GNUmakevars GNUmakerules
 
 # Targets
@@ -26,7 +31,7 @@ distclean: clean
 
 
 $(BUILD_ROOT)/$(BINDIR)/xssd: xssd
-	$(INSTALL) -o root -m 4711 $^ $@
+	$(INSTALL) $(SUIDPERM) $^ $@
 
 $(BUILD_ROOT)/etc/xssd:
 	$(INSTALL) -d $(BUILD_ROOT)/etc/xssd
