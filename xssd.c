@@ -38,7 +38,7 @@
 
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.1 2001-11-12 10:24:55 hjp Exp $";
+    "$Id: xssd.c,v 1.2 2001-11-12 20:22:55 hjp Exp $";
 
 
 char *cmnd;
@@ -208,7 +208,7 @@ int main(int argc, char **argv) {
 	       cfgfile, (int)pw->pw_uid, strerror(errno), getuid());
     }
     syslog(LOG_ERR, "%s: execing %s. [Ruid: %d]",
-	   cfgfile, command, strerror(errno), getuid());
+	   cfgfile, command, getuid());
     execve(command, argv + 2, env);
     syslog(LOG_ERR, "%s: execve(%s) failed: %s. [Ruid: %d]",
 	   cfgfile, command, strerror(errno), getuid());
@@ -218,7 +218,11 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.1  2001-11-12 10:24:55  hjp
+    Revision 1.2  2001-11-12 20:22:55  hjp
+    Removed wrong argument from syslog (Shouldn't gcc know that syslog
+    uses a printf-like format string?)
+
+    Revision 1.1  2001/11/12 10:24:55  hjp
     Pre-Release
 
 
