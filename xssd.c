@@ -40,7 +40,7 @@
 
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.4 2001-11-19 08:23:06 hjp Exp $";
+    "$Id: xssd.c,v 1.5 2002-01-26 23:20:25 hjp Exp $";
 
 
 char *cmnd;
@@ -83,6 +83,21 @@ int main(int argc, char **argv) {
     user = argv[1];
 
     openlog("xssd", LOG_PID | LOG_PERROR, LOG_AUTH);
+
+    /* a / in either the username or the command name could be used to 
+     * break out of /etc/xssd. Of course the user would actually have to 
+     * exist to do harm, but better safe than sorry.
+     */
+    if (strchr(user, '/')) {
+	syslog(LOG_ERR, "invalid username %s. [Ruid: %d]",
+	       user, getuid());
+	exit(1);
+    }
+    if (strchr(argv[2], '/')) {
+	syslog(LOG_ERR, "invalid command name %s. [Ruid: %d]",
+	       argv[2], getuid());
+	exit(1);
+    }
 
     snprintf(cfgfile, sizeof(cfgfile), "/etc/xssd/%s/%s",
 	     user, argv[2]);					/* check for return value unnecessary, because
@@ -212,16 +227,19 @@ int main(int argc, char **argv) {
     if (initgroups(user, pw->pw_gid) == -1) {
 	syslog(LOG_ERR, "%s: initgroups(%s, %d) failed: %s. [Ruid: %d]",
 	       cfgfile, user, pw->pw_gid, strerror(errno), getuid());
+	exit(1);
     }
     if (setgid(pw->pw_gid) == -1) {
 	syslog(LOG_ERR, "%s: setgid(%d) failed: %s. [Ruid: %d]",
 	       cfgfile, (int)pw->pw_gid, strerror(errno), getuid());
+	exit(1);
     }
     if (setuid(pw->pw_uid) == -1) {
 	syslog(LOG_ERR, "%s: setuid(%d) failed: %s. [Ruid: %d]",
 	       cfgfile, (int)pw->pw_uid, strerror(errno), getuid());
+	exit(1);
     }
-    syslog(LOG_ERR, "%s: execing %s. [Ruid: %d]",
+    syslog(LOG_INFO, "%s: execing %s. [Ruid: %d]",
 	   cfgfile, command, getuid());
     execve(command, argv + 2, env);
     syslog(LOG_ERR, "%s: execve(%s) failed: %s. [Ruid: %d]",
@@ -232,7 +250,15 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.4  2001-11-19 08:23:06  hjp
+    Revision 1.5  2002-01-26 23:20:25  hjp
+    Don't allow / in command and user name to prevent /../ attack.
+    Exit on failure to set user or group ids.
+    (Thanks to Günther Leber for reporting these problems)
+
+    Fixed log level on successful execution.
+    CVS ----------------------------------------------------------------------
+
+    Revision 1.4  2001/11/19 08:23:06  hjp
     Croak on unknown keywords. Made Comments explicit.
     Thanks to Bernd Petrovitsch for the patch.
 
