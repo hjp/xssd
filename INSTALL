@@ -1,0 +1,17 @@
+1) GNU make required
+
+    The supplied GNUmakefile uses a few extensions of GNU make (like
+    include). Other versions of make may or may not work.
+
+2) GNUmakevars and GNUmakerules
+
+    The GNUmakefile includes two files with a few commonly useful
+    definitions. You may have to edit these files to adjust them to your
+    system. You can also move them to a central place where gnu make can
+    find them (like /usr/local/include). 
+
+3) run "make all"
+
+4) run "make install" as root
+
+    xssd needs to be installed setuid root.
