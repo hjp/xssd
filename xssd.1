@@ -1,4 +1,4 @@
-.\" $Id: xssd.1,v 1.2 2001-11-19 08:23:03 hjp Exp $
+.\" $Id: xssd.1,v 1.3 2002-01-23 00:35:31 hjp Exp $
 .TH xssd 1
 .SH NAME
 xssd - extremely simple sudo
@@ -23,14 +23,18 @@ reads the file \fB/etc/xssd/\fIuser\fB/\fIcommand\fR, which contains
 lines in the format Keyword: Value, or comments starting with "#".
 The Keywords are case sensitive, whitespace around the value is ignored.
 The following keywords are recognized:
-.TP Command
+.TP
+Command
 The full path of the command to be executed. argv[0] will still be taken
 from the command line.
-.TP User
+.TP
+User
 The user name of a user allowed to execute this command
-.TP Group
+.TP
+Group
 The group name of a group allowed to execute this command
-.TP Env
+.TP
+Env
 The name of an environment variable which is passed through to the
 command unchanged. All environment variables not mentioned in the
 configuration file are discarded.
@@ -44,7 +48,10 @@ and sent to syslog.
 .SH AUTHOR
 Peter J. Holzer (hjp@hjp.at)
 .\" $Log: xssd.1,v $
-.\" Revision 1.2  2001-11-19 08:23:03  hjp
+.\" Revision 1.3  2002-01-23 00:35:31  hjp
+.\" fixed syntax error .TP commands
+.\"
+.\" Revision 1.2  2001/11/19 08:23:03  hjp
 .\" Croak on unknown keywords. Made Comments explicit.
 .\" Thanks to Bernd Petrovitsch for the patch.
 .\"
