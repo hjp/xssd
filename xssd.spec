@@ -1,6 +1,6 @@
 Summary: xssd - extremely simple sudo
 Name: xssd
-Version: 0.5
+Version: 0.6
 Release: 1
 Copyright: GPL
 Source: %{name}.tar.gz
@@ -34,5 +34,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/xssd.1.gz
 
 %changelog
+* Fri Apr 26 2002 Peter J. Holzer <hjp@hjp.at
+- Close config file after use.
+- Make sure stdin/out/err are open.
+
 * Wed Jan 23 2002 Peter J. Holzer <hjp@hjp.at>
 - rpmified							0.4-1

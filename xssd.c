@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <fcntl.h>
 #include <syslog.h>
 #include <unistd.h>
 #include <pwd.h>
@@ -40,7 +41,7 @@
 
 
 char xssd_c_cvs_version[] = 
-    "$Id: xssd.c,v 1.5 2002-01-26 23:20:25 hjp Exp $";
+    "$Id: xssd.c,v 1.6 2002-04-26 15:17:26 hjp Exp $";
 
 
 char *cmnd;
@@ -63,6 +64,30 @@ static void usage(void) {
 	 isspace((unsigned char)(line)[(lp)]); \
 	 (lp)++);
 
+static void clean_fds(void) {
+    /*
+     * Make sure stdin/out/err are open.
+     * On Linux and some BSDs the kernel already ensures that for setuid
+     * programs, but on most other UNIXes don't.
+     *
+     * xssd itself isn't exploitable (at worst, an attacker could
+     * redirect stderr to the syslog), but the scripts started by xssd
+     * might be.
+     *
+     * We could also close all fds > 2 here, but that might prevent some
+     * legitimate uses, so we delegate that responsibilitly to the
+     * called programs.
+     */
+
+    int fd;
+
+    do {
+	fd = open("/dev/null", O_RDONLY);
+	if (fd == -1) exit(1); /* tough luck :-) */
+    } while (fd <= 2);
+    close(fd);
+}
+
 int main(int argc, char **argv) {
     FILE *fp;
     char cfgfile[128];
@@ -76,6 +101,8 @@ int main(int argc, char **argv) {
     char *user;
     struct passwd *pw;
     
+    clean_fds();
+
     cmnd = argv[0];
 
     if (argc < 3) usage();
@@ -201,6 +228,7 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "Do not know what to do with \"%s\"\n", line);
 	exit(1);
     }
+    fclose(fp);
     if (env_i >= env_a) {
 	env_a = env_a * 3 / 2 + 10;
 	if ((env = realloc(env, env_a * sizeof(*env))) == NULL) {
@@ -250,7 +278,11 @@ int main(int argc, char **argv) {
 
 /* 
     $Log: xssd.c,v $
-    Revision 1.5  2002-01-26 23:20:25  hjp
+    Revision 1.6  2002-04-26 15:17:26  hjp
+    Close config file after use.
+    Make sure stdin/out/err are open.
+
+    Revision 1.5  2002/01/26 23:20:25  hjp
     Don't allow / in command and user name to prevent /../ attack.
     Exit on failure to set user or group ids.
     (Thanks to Günther Leber for reporting these problems)
