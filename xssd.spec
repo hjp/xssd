@@ -1,7 +1,7 @@
 Summary: xssd - extremely simple sudo
 Name: xssd
 Version: 0.8
-Release: 1
+Release: 2
 Copyright: GPL
 Source: %{name}.tar.gz
 Group: Utilities/Luga
@@ -34,6 +34,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/xssd.1.gz
 
 %changelog
+* Sun Aug  3 2003 Peter J. Holzer <hjp@hjp.at
+- removed binary from tarball					0.8-2
+
 * Fri Nov 29 2002 Peter J. Holzer <hjp@hjp.at
 - added -q option						0.8-1
 

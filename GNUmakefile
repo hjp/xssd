@@ -36,7 +36,7 @@ $(BUILD_ROOT)/$(BINDIR)/xssd: xssd
 $(BUILD_ROOT)/etc/xssd:
 	$(INSTALL) -d $(BUILD_ROOT)/etc/xssd
 
-%.tar.gz: % %.spec
+%.tar.gz: %.spec
 	tar zcf $@ $^
 
 %: %.sh
