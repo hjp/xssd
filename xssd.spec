@@ -1,6 +1,6 @@
 Summary: xssd - extremely simple sudo
 Name: xssd
-Version: 0.4
+Version: 0.5
 Release: 1
 Copyright: GPL
 Source: %{name}.tar.gz
